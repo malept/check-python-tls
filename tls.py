@@ -9,13 +9,7 @@ import sys
 try:
   from urllib2 import urlopen
 except ImportError:
-  # For Python 3, from urllib.request import urlopen
-  print('Please make sure Python 2 is installed.')
-  if sys.platform == 'win32':
-    print('Download the latest Python 2 version from https://www.python.org/downloads/windows/')
-  elif sys.platform == 'darwin':
-    print('Run "brew install python@2" and make sure "python" points to python2')
-  sys.exit(1)
+  from urllib.request import urlopen
 
 ctx = ssl.create_default_context()
 ctx.check_hostname = False
@@ -30,8 +24,8 @@ def check_tls(verbose):
     stderr=subprocess.STDOUT
   )
 
-  port = process.stdout.readline()
-  localhost_url = 'https://localhost:' + port
+  port = process.stdout.readline().strip()
+  localhost_url = u'https://localhost:{}'.format(port.decode('utf-8'))
 
   response = json.load(urlopen(localhost_url, context=ctx))
   tls = response['protocol']
